@@ -7,6 +7,8 @@ from datetime import datetime
 from bson.objectid import ObjectId
 from App.utils.encrypt import encrypt, decrypt
 from App.utils.decoder import extract_payload
+
+
 class Ask(Document):
     urlID = StringField(required=True)
     question = StringField(required=True)
@@ -15,6 +17,7 @@ class Ask(Document):
 
 class questionController(Document):
     def ask_question(self):
+
         try:
             data = request.get_json()
             urlID = data.get("url")
@@ -26,14 +29,13 @@ class questionController(Document):
                 return jsonify({"error": "User not found"}), 404
 
             question = Question(
-                user=urlID,  
+                user=urlID,
                 question=question,
                 answer="",
                 createdDate=datetime.now(),
-                status=False
+                status=False,
             )
             question.save()
-
 
             return jsonify(
                 {
@@ -88,7 +90,7 @@ class questionController(Document):
                     "question": question.question,
                     "answer": question.answer,
                     "createdDate": question.createdDate.strftime("%Y-%m-%d %H:%M:%S"),
-                    "status": question.status
+                    "status": question.status,
                 }
                 for question in questions
             ]
