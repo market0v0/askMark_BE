@@ -53,6 +53,10 @@ def ask_route():
 def generate_link():
     return userController().create_link()
 
+@app.route("/logout", methods=["GET"])
+def logout():
+    return userController().logout()
+
 @app.route("/answer", methods=["PUT"])
 def answer():
     return questionController().answer_question()

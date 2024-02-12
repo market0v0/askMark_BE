@@ -10,7 +10,7 @@ from mongoengine import Document
 from App import db
 import os
 
-from App.utils.decoder import extract_payload
+from App.utils.decoder import extract_payload, token_expired
 
 class userController(Document):
     def create_user(self):  # Add 'self' as the first parameter
@@ -75,12 +75,21 @@ class userController(Document):
             username = extract_payload(token).get("username")
 
             user = db.user.find_one({"username": username})
-
             if user is None:
                 return jsonify({"error": "User not found"}), 404
 
             link_id = user.get("_id") 
             return jsonify({"link": str(link_id)}), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    def logout(self):
+        try:
+            mtoken = request.headers.get("Authorization")
+            token = decrypt(mtoken)
+            
+          
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
