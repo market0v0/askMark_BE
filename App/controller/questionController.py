@@ -7,10 +7,6 @@ from datetime import datetime
 from bson.objectid import ObjectId
 from App.utils.encrypt import encrypt, decrypt
 from App.utils.decoder import extract_payload
-class Ask(Document):
-    urlID = StringField(required=True)
-    question = StringField(required=True)
-    createdDate = DateTimeField(default=datetime.now)
 
 
 class questionController(Document):
@@ -82,7 +78,7 @@ class questionController(Document):
 
             questions = Question.objects(user=user)
 
-            question_list = [
+       """      question_list = [
                 {
                     "questionId": str(question.id),
                     "question": question.question,
@@ -91,9 +87,9 @@ class questionController(Document):
                     "status": question.status
                 }
                 for question in questions
-            ]
+            ] """
 
-            return jsonify({"questions": question_list})
+            return jsonify({"questions": questions})
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
