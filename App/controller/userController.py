@@ -13,7 +13,8 @@ import os
 from App.utils.decoder import extract_payload, token_expired
 
 class userController(Document):
-    def create_user(self):  # Add 'self' as the first parameter
+    def create_user(self):
+        key = os.getenv("SECRET_KEY")  # Add 'self' as the first parameter
         try:
             data = request.get_json()
             username = data.get("username")
@@ -26,11 +27,20 @@ class userController(Document):
             user = User(username=username, email=email, password=password)
 
             user.save()
+            payload = {
+                "username": user["username"],
+            }
 
-            return jsonify(
-                {
-                    "message": "User created successfully",
-                }
+            token = jwt.encode(payload, key, algorithm="HS256")
+            mtoken = encrypt(token)
+            return (
+
+                jsonify(
+                    {
+                        "token": mtoken,
+                    }
+                ),
+                200,
             )
         except Exception as e:
             return jsonify({"error": str(e)}), 500
