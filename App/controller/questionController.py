@@ -49,6 +49,8 @@ class questionController(Document):
 
     def answer_question(self):
         try:
+            mtoken = request.headers.get("Authorization")
+            token = decrypt(mtoken)
             data = request.get_json()
             qID = data.get("questionId")
             answer = data.get("answer")
@@ -82,7 +84,7 @@ class questionController(Document):
             if user is None:
                 return jsonify({"error": "User not found"}), 404
 
-            questions = Question.objects(user=user)
+            questions = Question.objects(user=user).order_by('-createdDate')
 
             question_list = [
                 {
