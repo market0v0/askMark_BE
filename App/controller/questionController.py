@@ -49,8 +49,6 @@ class questionController(Document):
 
     def answer_question(self):
         try:
-            mtoken = request.headers.get("Authorization")
-            token = decrypt(mtoken)
             data = request.get_json()
             qID = data.get("questionId")
             answer = data.get("answer")

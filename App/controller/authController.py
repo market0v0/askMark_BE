@@ -5,25 +5,25 @@ from functools import wraps
 from mongoengine import Document
 from App.model.userModel import User
 from App import db
-
+from App.utils.encrypt import encrypt, decrypt
 
 class AuthController(Document):
     @staticmethod
     def token_required(func):
         @wraps(func)
         def decorated(*args, **kwargs):
-            key = os.getenv("SECRET_KEY")
-            token = request.headers.get("Authorization")
-            print(token)
-            if not token:
+            mtoken = request.headers.get("Authorization")
+            if not mtoken:
                 return jsonify({"message": "Token is missing"}), 401
+            token = decrypt(mtoken)
+            key = os.getenv("SECRET_KEY")
             try:
                 data = jwt.decode(token, key, algorithms="HS256")
             except jwt.ExpiredSignatureError:
-                return jsonify({"message": "Token has expired"}), 401
+                return jsonify({"valid": False}), 401
             except jwt.InvalidTokenError:
-                return jsonify({"message": "Invalid token"}), 401
+                return jsonify({"valid": False}), 401
 
-            return jsonify(data)
+            return jsonify({"valid": True}), 200
 
         return decorated
