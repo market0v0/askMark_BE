@@ -8,13 +8,12 @@ from App import db
 from App.utils.encrypt import encrypt, decrypt
 
 class AuthController(Document):
-    @staticmethod
     def token_required(func):
         @wraps(func)
         def decorated(*args, **kwargs):
             mtoken = request.headers.get("Authorization")
             if not mtoken:
-                return jsonify({"message": "Token is missing"}), 401
+                return jsonify({"valid": False}), 401
             token = decrypt(mtoken)
             key = os.getenv("SECRET_KEY")
             try:
@@ -24,6 +23,6 @@ class AuthController(Document):
             except jwt.InvalidTokenError:
                 return jsonify({"valid": False}), 401
 
-            return jsonify({"valid": True}), 200
+            return jsonify({"data": data,"valid": True }), 200
 
         return decorated
